@@ -1,5 +1,3 @@
-#!/usr/bin/python3.9
-
 from webexteamssdk import WebexTeamsAPI, ApiError
 import os
 
@@ -61,9 +59,7 @@ def check_svc_status(log_path, text_check, svc):
   status = os.popen('cat {}  | grep -i "{}"'.format(log_path, text_check)).read().strip()
   err_status = os.popen('cat {}  | grep -A1 "{}"| sed -n "2p"'.format(log_path, svc)).read().strip()
 
-  if status == text_check :
-      pass
-  else:
+  if status != text_check :
       msg = '## Check OpenStack {} Status\n{}'.format(svc, err_status)
       send_messages(room, msg)
 
@@ -71,9 +67,7 @@ def check_svc_status(log_path, text_check, svc):
 def check_log_status(log_path, text_check, svc):
   sys_status = os.popen('cat {}  | grep -A1 "{}" | sed -n "2p"'.format(log_path, text_check)).read().strip()
 
-  if sys_status == "" :
-      pass
-  else:
+  if sys_status != "" :
       msg = '## Check {} Status\n{}'.format(svc, sys_status)
       send_messages(room, msg)
 
@@ -81,21 +75,16 @@ def check_log_status(log_path, text_check, svc):
 def check_bit_error(log_path, text_check, bit):
   current_bit = os.popen("cat {}  | grep -A1 '{}' | sed -n '2p' | awk -F count '{{print $2}}'".format(log_path, text_check)).read().strip()
 
-  if current_bit == '':
-    pass
-  else:
-    if int(current_bit) > bit :
-       msg = '## Check {}\n{}'.format(text_check, current_bit)
-       send_messages(room, msg)
+  if current_bit != '' and int(current_bit) > bit:
+      msg = '## Check {}\n{}'.format(text_check, current_bit)
+      send_messages(room, msg)
 
 
 # Check PaceMaker Log Status
 def check_pacemaker_status(log_path, text_check, svc):
   sys_status = os.popen('cat {}  | grep -A2 "{}" | sed -n "3p"'.format(log_path, svc)).read().strip()
 
-  if sys_status == text_check :
-      pass
-  else:
+  if sys_status != text_check :
       msg = '## Check {} Status\n{}'.format(svc, sys_status)
       send_messages(room, msg)
 
@@ -119,9 +108,7 @@ def check_ceph_status(log_path, text_check, svc):
   status = os.popen('cat {}  | grep -i "{}"'.format(log_path, text_check)).read().strip()
   err_status = os.popen('cat {}  | grep -A1 "{}"| sed -n "2p"'.format(log_path, svc)).read().strip()
 
-  if status == text_check :
-      pass
-  else:
+  if status != text_check :
       msg = '## Check {}\n{}'.format(svc, err_status)        
       send_messages(room, msg) 
 
@@ -143,9 +130,7 @@ def check_ceph_usage(log_path, text_check):
 def check_ceph_fault_disk(log_path, text_check, svc):
   sys_status = os.popen('cat {}  | grep -A1 "{}" | sed -n "2p"'.format(log_path, text_check)).read().strip()
 
-  if sys_status == "" :
-      pass
-  else:
+  if sys_status != "" :
       msg = '## Check {}\n{}'.format(svc, sys_status)
       send_messages(room, msg)
 
